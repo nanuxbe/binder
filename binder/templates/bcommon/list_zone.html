@@ -18,6 +18,7 @@
   <th>Actions</th>
 </tr>
 {% for current_record in zone_array %}
+{% if current_record.rr_name != '@' %}
 <tr>
   <td><input type="checkbox" name="rr_list" value="{{ current_record.rr_name }}.{{ zone_name }}" /></td>
   <td>{{ current_record.rr_name }}</td>
@@ -41,6 +42,7 @@
     </div>
   </td>
 </tr>
+{% endif %}
 {% endfor %}
 </table>
 

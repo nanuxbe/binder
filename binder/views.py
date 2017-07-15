@@ -1,3 +1,4 @@
+from collections import OrderedDict
 # Binder VIews
 
 # 3rd Party
@@ -36,6 +37,12 @@ def view_server_zones(request, dns_server):
     except ZoneException as exc:
         messages.error(request, "Unable to list server zones. Error: %s" % exc)
 
+    my_zone_names = ['office', 'home', 'vlan', 'vlanbis', 'vpn', 'dev', 'p4x']
+    zones = [
+        (k, v) for k, v in zone_array.stats.zone_stats.iteritems() if k in my_zone_names or '.168.192' in k or '.8.10' in k
+    ]
+    zone_array.stats.zone_stats = OrderedDict(sorted(zones, key=lambda item: item[0]))
+
     return render(request, "bcommon/list_server_zones.html",
                   {"dns_server": this_server,
                    "zone_array": zone_array})
@@ -62,7 +69,7 @@ def view_zone_records(request, dns_server, zone_name):
                         "zone_name" :zone_name })
 
     return render(request, "bcommon/list_zone.html",
-                  {"zone_array": zone_array,
+                  {"zone_array": sorted(zone_array, key=lambda item: '{}{}'.format(item['rr_type'], item['rr_name'])),
                    "dns_server": this_server,
                    "zone_name": zone_name})
 
